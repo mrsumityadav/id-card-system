@@ -7,28 +7,30 @@ const signUpRouter = require('./routes/singup')
 const adminRouter = require('./routes/admin')
 const superAdminRouter = require('./routes/superadmin')
 const path = require("path");
-const MongoStore = require("connect-mongo");
 
 const cookieParser = require('cookie-parser')
 const session = require('express-session');
+const MongoStore = require("connect-mongo")(session);
 const validateAdmin = require('./middleware/admin')
 const validateSuperAdmin = require('./middleware/superAdmin')
 
 app.use(express.static(path.join(__dirname, "public")));
 app.set('view engine', 'ejs')
 require('./config/db')
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({
-    mongoUrl: process.env.MONGO_URL
-  }),
-  cookie: {
-    secure: false
-  }
-}));
-
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: new MongoStore({
+      mongoUrl: process.env.MONGO_URL,
+      collectionName: "sessions",
+    }),
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+    },
+  })
+);
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
