@@ -1,0 +1,65 @@
+<script>
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('toggleSidebar');
+        const mobileToggle = document.getElementById('mobileToggle');
+        const hamburgerIcon = document.getElementById('hamburgerIcon');
+        const closeIcon = document.getElementById('closeIcon');
+        const sidebarTexts = document.querySelectorAll('.sidebar-text');
+
+        // Desktop Collapse Logic
+        let isCollapsed = false;
+
+        toggleBtn.addEventListener('click', () => {
+            isCollapsed = !isCollapsed;
+
+            if (isCollapsed) {
+                sidebar.classList.remove('md:w-64');
+                sidebar.classList.add('md:w-20');
+                toggleBtn.classList.add('rotate-180');
+                sidebarTexts.forEach(text => text.classList.add('hidden'));
+            } else {
+                sidebar.classList.remove('md:w-20');
+                sidebar.classList.add('md:w-64');
+                toggleBtn.classList.remove('rotate-180');
+                setTimeout(() => {
+                    if (!isCollapsed) sidebarTexts.forEach(text => text.classList.remove('hidden'));
+                }, 150);
+            }
+        });
+
+        // Mobile Menu Logic
+        const toggleMobileMenu = () => {
+            const isClosed = sidebar.classList.contains('-translate-x-full');
+            if (isClosed) {
+                // Open Menu
+                sidebar.classList.remove('-translate-x-full');
+                hamburgerIcon.classList.add('hidden');
+                closeIcon.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden'); // Prevent scrolling
+            } else {
+                // Close Menu
+                sidebar.classList.add('-translate-x-full');
+                hamburgerIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+        };
+
+        mobileToggle.addEventListener('click', toggleMobileMenu);
+
+        // Close sidebar when clicking a link on mobile
+        sidebar.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 768) {
+                    toggleMobileMenu();
+                }
+            });
+        });
+
+        // Reset state on resize to handle desktop/mobile transitions
+        window.addEventListener('resize', () => {
+            if (window.innerWidth < 768) {
+                sidebarTexts.forEach(text => text.classList.remove('hidden', 'opacity-0', 'pointer-events-none'));
+            }
+        });
+</script>

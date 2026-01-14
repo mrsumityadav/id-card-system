@@ -1,0 +1,82 @@
+<div id="cardPreview" class="w-full">
+  <div class="bg-white rounded-xl overflow-hidden shadow-xl w-full 
+        sm:aspect-[3.375/2.125] 
+        h-auto min-h-fit
+        max-w-[420px] mx-auto
+        flex flex-col relative">
+
+    <!-- Header (22%) -->
+    <div class="flex items-center px-4 bg-gray-900 text-white flex-[0_0_22%]">
+      <div class="h-9 w-9 bg-white/20 rounded-md mr-3 overflow-hidden flex items-center justify-center shrink-0">
+        <img src="<%= school.logo || defaultImage %>" class="w-full h-full object-cover">
+      </div>
+      <div class="min-w-0">
+        <h4 class="font-bold text-xs leading-tight truncate">
+          <%= school.name %>
+        </h4>
+        <p class="text-[0.6rem] opacity-80">
+          Student Identity Card
+        </p>
+      </div>
+    </div>
+
+    <!-- Content (58%) -->
+    <div class="flex px-4 py-2 gap-3 flex-[1_1_58%] overflow-hidden">
+      <!-- Photo -->
+      <div class="w-[28%] aspect-[3/4] bg-gray-100 rounded-md overflow-hidden border shrink-0">
+        <img id="cardPhoto" src="<%= student?.image || defaultImage %>" class="w-full h-full object-cover">
+      </div>
+
+      <!-- Details -->
+      <div class="flex-1 min-w-0 space-y-1">
+        <div>
+          <p class="text-[0.6rem] text-gray-400 uppercase font-bold">Name</p>
+          <p id="cardName" class="text-xs font-semibold uppercase truncate">
+            <%= student?.name || "Student Name" %>
+          </p>
+        </div>
+
+        <div class="flex gap-3">
+          <div>
+            <p class="text-[0.6rem] text-gray-400 uppercase font-bold">Class</p>
+            <p id="cardClass" class="text-xs font-semibold uppercase">
+              <%= student?.className || "Class" %>
+            </p>
+          </div>
+
+          <div>
+            <p class="text-[0.6rem] text-gray-400 uppercase font-bold">D.O.B</p>
+            <p id="cardDob" class="text-xs font-semibold uppercase">
+              <%= student?.dob || "D.O.B" %>
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <p class="text-[0.6rem] text-gray-400 uppercase font-bold">Phone</p>
+          <p id="cardPhone" class="text-xs font-semibold uppercase truncate">
+            <%= student?.contactNumber || "9876543210" %>
+          </p>
+        </div>
+
+        <div>
+          <p class="text-[0.6rem] text-gray-400 uppercase font-bold">Father</p>
+          <p id="cardfname" class="text-xs font-semibold uppercase truncate">
+            <%= student?.fatherName || "Father Name" %>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer (20%) -->
+    <div class="flex items-center justify-between px-4 bg-gray-100 flex-[0_0_10%]">
+      <p class="text-[0.6rem] font-medium text-gray-600">
+        Authorized
+      </p>
+      <div class="w-12 h-6 overflow-hidden shrink-0">
+        <img src="<%= school.principalSignature || defaultImage %>" class="w-full h-full object-contain">
+      </div>
+    </div>
+
+  </div>
+</div>

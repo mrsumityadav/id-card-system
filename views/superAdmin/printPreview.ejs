@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Print ID Cards</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 4mm;
+        }
+
+        @media print {
+            body {
+                margin: 0;
+            }
+
+            .page-break {
+                page-break-after: always;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+
+        .print-page {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            /* 2 columns */
+            grid-template-rows: repeat(5, auto);
+            /* 5 rows */
+            gap: 10px;
+            width: 100%;
+        }
+    </style>
+
+</head>
+
+<body class="bg-white">
+
+    <!-- ACTION BAR (hidden in print) -->
+    <div class="no-print fixed top-4 right-4 flex gap-3">
+        <button onclick="window.print()" class="px-5 py-2 bg-green-600 text-white rounded-lg font-semibold">
+            Print
+        </button>
+
+        <form method="POST" action="/superAdmin/print/complete">
+            <input type="hidden" name="ids" value="<%= ids.join(',') %>">
+            <button class="px-5 py-2 bg-indigo-600 text-white rounded-lg font-semibold">
+                Mark as Printed
+            </button>
+        </form>
+    </div>
+
+    <!-- PRINT AREA -->
+    <% for (let i=0; i < students.length; i++) { %>
+        <% if (i % 10===0) { %>
+            <div class="print-page">
+                <% } %>
+                    <%- include( `../templates/${selectedTemplate}.ejs`, 
+                    { student: { 
+                        name: students[i].name, 
+                        className: students[i].classId.className + (students[i].sectionId ? " - " +
+                        students[i].sectionId.sectionName : "" ),
+                        dob: new Date(students[i].dob).toLocaleDateString("en-GB"),
+                        fatherName: students[i].fatherName, contactNumber: students[i].contactNumber, 
+                        image: students[i].image }, school, defaultImage: "https://lh5.googleusercontent.com/proxy/t08n2HuxPfw8OpbutGWjekHAgxfPFv-pZZ5_-uTfhEGK8B5Lp-VN4VjrdxKtr8acgJA93S14m9NdELzjafFfy13b68pQ7zzDiAmn4Xg8LvsTw1jogn_7wStYeOx7ojx5h63Gliw"} ) %>
+
+                        <% if ((i + 1) % 10===0 || i===students.length - 1) { %>
+            </div>
+            <div class="page-break"></div>
+            <% } %>
+                <% } %>
+
+
+                    <!-- <script>
+                        window.onload = () => {
+                            window.print();
+
+                            // Redirect AFTER print dialog closes
+                            window.onafterprint = () => {
+                                window.location.href = "/superAdmin";
+                            };
+                        };
+                    </script> -->
+
+
+</body>
+
+</html>

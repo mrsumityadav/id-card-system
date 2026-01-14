@@ -1,0 +1,20 @@
+<script>
+    const mobileToggle = document.getElementById('mobileToggle');
+    const sidebar = document.getElementById('sidebar');
+    const hamburgerIcon = document.getElementById('hamburgerIcon');
+    const closeIcon = document.getElementById('closeIcon');
+
+    mobileToggle.addEventListener('click', () => {
+        const isClosed = sidebar.classList.contains('-translate-x-full');
+        if (isClosed) {
+            sidebar.classList.remove('-translate-x-full');
+            hamburgerIcon.classList.add('hidden');
+            closeIcon.classList.remove('hidden');
+        } else {
+            sidebar.classList.add('-translate-x-full');
+            hamburgerIcon.classList.remove('hidden');
+            closeIcon.classList.add('hidden');
+        }
+    });
+
+</script>

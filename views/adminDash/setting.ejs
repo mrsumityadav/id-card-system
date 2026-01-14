@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - ID Card Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            /* IE & Edge */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- Mobile Header/Nav -->
+    <%- include("../partials/mobileHeader.ejs") %>
+
+        <div class="flex h-screen overflow-hidden pt-16 md:pt-0">
+            <!-- Sidebar / Mobile Full Menu -->
+            <%- include("../partials/sidebar.ejs") %>
+
+                <!-- Main Content -->
+                <main class="flex-1 overflow-y-auto h-full bg-gray-50 p-6 md:p-10 transition-all duration-300">
+
+                    <div class="max-w-6xl mx-auto space-y-8">
+                        <!-- Header -->
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Settings</h1>
+                            <p class="text-gray-500 mt-1">Manage your school profile
+                                and preferences</p>
+                        </div>
+
+                        <!-- School Details Section -->
+                        <div
+                            class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 relative overflow-hidden group hover:shadow-md transition-shadow duration-300">
+                            <!-- Edit Button - repositioned for better mobile visibility -->
+                            <div class="md:absolute md:top-0 md:right-0 md:p-8 mb-6 md:mb-0 flex justify-end">
+                                <button id="editDetailsBtn"
+                                    class="flex items-center space-x-2 bg-indigo-50 text-indigo-600 px-4 py-2.5 rounded-xl hover:bg-indigo-100 transition-colors font-medium shadow-sm md:opacity-0 md:group-hover:opacity-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                    </svg>
+                                    <span>Edit Details</span>
+                                </button>
+                            </div>
+
+                            <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-indigo-500" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                </svg>
+                                School Details
+                            </h2>
+
+                            <div
+                                class="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
+                                <!-- Logo Placeholder -->
+                                <div
+                                    class="h-28 w-28 md:h-32 md:w-32 bg-gray-100 rounded-2xl flex-shrink-0 flex items-center justify-center border-2 border-dashed border-gray-300 text-gray-400 overflow-hidden relative">
+                                    <img id="schoolLogoDisplay"
+                                        src="<%= school.logo ? school.logo : 'https://lh5.googleusercontent.com/proxy/t08n2HuxPfw8OpbutGWjekHAgxfPFv-pZZ5_-uTfhEGK8B5Lp-VN4VjrdxKtr8acgJA93S14m9NdELzjafFfy13b68pQ7zzDiAmn4Xg8LvsTw1jogn_7wStYeOx7ojx5h63Gliw' %>"
+                                        alt="School Logo"
+                                        class="w-full h-full object-cover <%= school.logo ? '' : 'hidden' %>">
+
+                                    <span id="schoolLogoPlaceholder" class="<%= school.logo ? 'hidden' : '' %> text-sm">
+                                        Logo
+                                    </span>
+                                </div>
+
+                                <div class="text-center md:text-left pt-2 flex-1 w-full">
+                                    <h3 id="schoolNameDisplay"
+                                        class="text-2xl md:text-3xl font-semibold text-gray-800 mb-2">
+                                        <%= school.name %>
+                                    </h3>
+                                    <div class="flex items-center justify-center md:justify-start text-gray-500 mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5 flex-shrink-0"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                        <p id="schoolAddressDisplay" class="text-sm md:text-base leading-snug">
+                                            <span id="mainSchool">
+                                                <%= school.address %>
+                                            </span> -
+                                            <span id="mainPincode">
+                                                <%= school.pincode %>
+                                            </span>
+                                            (<span id="mainState">
+                                                <%= school.state %>
+                                            </span>)
+                                        </p>
+                                    </div>
+                                    <div class="flex items-center justify-center md:justify-start text-gray-500">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5 flex-shrink-0"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                        </svg>
+                                        <p id="schoolEmailDisplay" class="text-sm md:text-base truncate">
+                                            <%= user.email %>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Grid for Sign and ID Design -->
+                        <!-- Main Grid: Left = Templates, Right = Principal Signature -->
+                        <div class="flex flex-col lg:flex-row gap-6 md:gap-8 h-full">
+
+                            <!-- Left Side: Templates (Scrollable if content is long) -->
+                            <div
+                                class="flex-1 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 overflow-auto hide-scrollbar h-[90vh]">
+                                <div class="sticky top-0 z-10 bg-white p-6 md:p-8 border-b border-gray-100">
+                                    <h2 class="text-xl font-bold text-gray-900 flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-indigo-500"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                                        </svg>
+                                        ID Card Design Templates
+                                    </h2>
+                                </div>
+
+                                <div class="p-6 md:p-8 overflow-y-auto max-h-[calc(90vh-96px)]">
+                                    <div class="flex flex-col gap-4">
+                                        <% templates.forEach(t=> { %>
+                                            <form method="POST" action="/admin/select-template/<%= school._id %>">
+                                                <input type="hidden" name="template" value="<%= t.name %>">
+                                                <button
+                                                    class="p-3 rounded-xl border <%= school.selectedTemplate === t.name ? 'ring-2 ring-indigo-600' : '' %> w-full">
+                                                    <!-- PREVIEW WRAPPER -->
+                                                    <div class="w-[360px] scale-[0.9] pointer-events-none mx-auto">
+                                                        <%- include(`../templates/${t.name}.ejs`, { 
+                                                            student: {
+                                                            name: "Student Name" , className: "Class" ,
+                                                            dob: "DD/MM/YYYY" , fatherName: "Father Name" ,
+                                                            address: "Address" , phone: "9876543210" ,
+                                                            image: "https://lh5.googleusercontent.com/proxy/t08n2HuxPfw8OpbutGWjekHAgxfPFv-pZZ5_-uTfhEGK8B5Lp-VN4VjrdxKtr8acgJA93S14m9NdELzjafFfy13b68pQ7zzDiAmn4Xg8LvsTw1jogn_7wStYeOx7ojx5h63Gliw"
+                                                            }, school, defaultImage: "https://lh5.googleusercontent.com/proxy/t08n2HuxPfw8OpbutGWjekHAgxfPFv-pZZ5_-uTfhEGK8B5Lp-VN4VjrdxKtr8acgJA93S14m9NdELzjafFfy13b68pQ7zzDiAmn4Xg8LvsTw1jogn_7wStYeOx7ojx5h63Gliw"}) %>
+                                                    </div>
+                                                    <p class="mt-2 text-sm font-semibold text-center">
+                                                        <%= t.label %>
+                                                    </p>
+                                                </button>
+                                            </form>
+                                            <% }) %>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Side: Principal Signature -->
+                            <div
+                                class="w-full h-fit lg:w-96 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 flex flex-col">
+                                <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-indigo-500"
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                    </svg>
+                                    Principal Signature
+                                </h2>
+
+                                <div class="flex-1 flex flex-col justify-center">
+                                    <div class="relative w-full">
+                                        <!-- Signature Upload Form (INVISIBLE) -->
+                                        <form action="/admin/upload-signature/<%= school._id %>" method="POST"
+                                            enctype="multipart/form-data" class="absolute inset-0 z-20">
+                                            <input type="file" name="principalSignature" accept="image/*"
+                                                class="w-full h-full opacity-0 cursor-pointer"
+                                                onchange="this.form.submit()">
+                                        </form>
+
+                                        <!-- Signature Box UI -->
+                                        <div
+                                            class="w-full h-36 border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center gap-2 relative overflow-hidden">
+                                            <% if (school.principalSignature) { %>
+                                                <img src="<%= school.principalSignature %>" alt="Principal Signature"
+                                                    class="max-h-24 object-contain">
+                                                <% } else { %>
+                                                    <p class="text-sm text-gray-400">Click to upload signature</p>
+                                                    <% } %>
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-2 text-center">
+                                            Added signature will appear on all generated ID cards.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </main>
+        </div>
+
+        <!-- Edit School Details Modal -->
+        <div id="editSchoolModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
+            aria-modal="true">
+            <!-- Backdrop -->
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+
+            <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+                <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                    <form method="post" action="/admin/setting/<%= school._id %>" enctype="multipart/form-data"
+                        class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-gray-100">
+                        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                            <div class="sm:flex sm:items-start">
+                                <div
+                                    class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
+                                    <svg class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                    </svg>
+                                </div>
+                                <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+                                    <h3 class="text-xl font-semibold leading-6 text-gray-900" id="modal-title">Edit
+                                        School
+                                        Details</h3>
+                                    <div class="mt-4 space-y-4">
+                                        <div>
+                                            <label for="editSchoolName"
+                                                class="block text-sm font-medium leading-6 text-gray-900">School
+                                                Name</label>
+                                            <div class="mt-2">
+                                                <input type="text" name="name" id="editSchoolName"
+                                                    class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label for="editSchoolAddress"
+                                                class="block text-sm font-medium leading-6 text-gray-900">Address</label>
+                                            <div class="mt-2">
+                                                <input type="text" name="address" id="editSchoolAddress"
+                                                    class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                    placeholder="Enter state">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label for="editSchoolState"
+                                                class="block text-sm font-medium leading-6 text-gray-900">State</label>
+                                            <div class="mt-2">
+                                                <input type="text" name="state" id="editSchoolState"
+                                                    class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                    placeholder="Enter state">
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label for="editSchoolPincode"
+                                                class="block text-sm font-medium leading-6 text-gray-900">Pincode</label>
+                                            <div class="mt-2">
+                                                <input type="text" name="pincode" id="editSchoolPincode"
+                                                    class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                    placeholder="Enter pincode">
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label for="editSchoolLogo"
+                                                class="block text-sm font-medium leading-6 text-gray-900">School
+                                                Logo</label>
+                                            <div class="mt-2">
+                                                <input type="file" id="editSchoolLogo" name="logo" accept="image/*"
+                                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                            <button type="submit" id="saveSchoolDetailsBtn"
+                                class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto">Save
+                                Changes</button>
+                            <button type="button" id="cancelEditBtn"
+                                class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // --- Edit School Details Logic ---
+            const editDetailsBtn = document.getElementById('editDetailsBtn');
+            const editSchoolModal = document.getElementById('editSchoolModal');
+            const cancelEditBtn = document.getElementById('cancelEditBtn');
+            const saveSchoolDetailsBtn = document.getElementById('saveSchoolDetailsBtn');
+
+            const schoolNameDisplay = document.getElementById('schoolNameDisplay');
+            const schoolAddressDisplay = document.getElementById('mainSchool');
+            const schoolPincodeDisplay = document.getElementById('mainPincode');
+            const schoolStateDisplay = document.getElementById('mainState');
+            const schoolLogoDisplay = document.getElementById('schoolLogoDisplay');
+            const schoolLogoPlaceholder = document.getElementById('schoolLogoPlaceholder');
+
+            const editSchoolName = document.getElementById('editSchoolName');
+            const editSchoolAddress = document.getElementById('editSchoolAddress');
+            const editSchoolPincode = document.getElementById('editSchoolPincode');
+            const editSchoolState = document.getElementById('editSchoolState');
+            const editSchoolLogo = document.getElementById('editSchoolLogo');
+
+
+            editDetailsBtn.addEventListener('click', () => {
+                // Populate inputs
+                editSchoolName.value = schoolNameDisplay.innerText;
+                editSchoolAddress.value = schoolAddressDisplay.innerText;
+                editSchoolState.value = schoolStateDisplay.innerText;
+                editSchoolPincode.value = schoolPincodeDisplay.innerText;
+                editSchoolModal.classList.remove('hidden');
+            });
+
+            const closeModal = () => {
+                editSchoolModal.classList.add('hidden');
+            };
+
+            cancelEditBtn.addEventListener('click', closeModal);
+
+        </script>
+
+</body>
+
+</html>

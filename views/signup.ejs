@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Principal Signup</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+        .eye-icon {
+            cursor: pointer;
+        }
+
+        /* Chrome, Edge, Safari */
+        input[type=number]::-webkit-outer-spin-button,
+        input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+    </head>
+
+    <body class="bg-gray-100 min-h-screen flex items-center justify-center">
+
+        <div class="bg-white shadow-md rounded-lg w-full max-w-xl p-6 md:p-8">
+            <h2
+                class="text-2xl md:text-3xl font-bold text-center text-gray-700 mb-6">School
+                Principal Signup</h2>
+
+            <form action="/signup" method="POST" class="space-y-4">
+
+                <!-- Personal Info -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label
+                            class="block text-sm font-medium text-gray-600 mb-1">Full
+                            Name</label>
+                        <input type="text" name="name" placeholder="John Doe"
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label
+                            class="block text-sm font-medium text-gray-600 mb-1">Email</label>
+                        <input type="email" name="email"
+                            placeholder="example@school.com"
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="relative">
+                        <label
+                            class="block text-sm font-medium text-gray-600 mb-1">Password</label>
+                        <input type="password" id="password" name="password"
+                            placeholder="Create password"
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10">
+                        <!-- Eye Icon -->
+                        <svg id="togglePassword"
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5 absolute right-3 top-9 eye-icon text-gray-400"
+                            fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path id="eyeIcon" stroke-linecap="round"
+                                stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <label
+                            class="block text-sm font-medium text-gray-600 mb-1">Phone</label>
+                        <input type="number" name="phone"
+                            placeholder="9876543210"
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+
+                <!-- School Info -->
+                <div class="grid grid-cols-1 gap-4">
+                    <div>
+                        <label
+                            class="block text-sm font-medium text-gray-600 mb-1">School
+                            Name</label>
+                        <input type="text" name="school"
+                            placeholder="ABC International School"
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label
+                            class="block text-sm font-medium text-gray-600 mb-1">School
+                            Address</label>
+                        <input type="text" name="address"
+                            placeholder="Delhi Road Near X Restaurent"
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-600 mb-1">State</label>
+                            <input type="text" name="state" placeholder="State"
+                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-600 mb-1">Pincode</label>
+                            <input type="text" name="pincode"
+                                placeholder="123456"
+                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit"
+                    class="w-full bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition">
+                    Signup
+                </button>
+
+                <p class="text-center text-gray-500 text-sm">
+                    Already have an account?
+                    <a href="/" class="text-blue-600 hover:underline">Login</a>
+                </p>
+            </form>
+        </div>
+
+        <script>
+        const togglePassword = document.querySelector("#togglePassword");
+        const password = document.querySelector("#password");
+        const eyeIcon = document.querySelector("#eyeIcon");
+
+        togglePassword.addEventListener("click", function () {
+            const type = password.getAttribute("type") === "password" ? "text" : "password";
+            password.setAttribute("type", type);
+
+            // Toggle eye icon (simple)
+            if (type === "text") {
+                eyeIcon.setAttribute("d", "M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.269-2.944-9.543-7a9.965 9.965 0 011.582-3.16m2.475-2.82A9.955 9.955 0 0112 5c4.477 0 8.268 2.944 9.542 7a10.05 10.05 0 01-1.353 2.583m-4.314 3.242A3 3 0 1115 12 3 3 0 0111.71 15.71z");
+            } else {
+                eyeIcon.setAttribute("d", "M15 12a3 3 0 11-6 0 3 3 0 016 0z");
+            }
+        });
+    </script>
+
+    </body>
+
+</html>

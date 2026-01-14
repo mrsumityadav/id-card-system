@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Student - ID Card Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- Mobile Header/Nav -->
+    <%- include("../partials/mobileHeader.ejs") %>
+
+        <div class="flex h-screen overflow-hidden pt-16 md:pt-0">
+            <!-- Sidebar / Mobile Full Menu -->
+            <%- include("../partials/sidebar.ejs") %>
+
+                <!-- Main Content -->
+                <main class="flex-1 overflow-y-auto h-full bg-slate-50 p-6 md:p-10 transition-all duration-300">
+
+                    <div class="max-w-7xl mx-auto h-full flex flex-col">
+                        <div class="mb-8">
+                            <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Add
+                                New Student</h1>
+                            <p class="text-gray-500 mt-1">Enter student details to
+                                generate ID card</p>
+                        </div>
+
+                        <div class="flex flex-col lg:flex-row gap-8 items-start h-full">
+
+                            <!-- Form Section -->
+                            <div class="w-full lg:w-1/2 bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                                <form class="space-y-6" action="/admin/addStudent" method="post"
+                                    enctype="multipart/form-data">
+
+                                    <!-- Photo Upload -->
+                                    <div class="flex items-center space-x-6">
+                                        <div
+                                            class="h-24 w-24 bg-gray-100 rounded-2xl border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 overflow-hidden relative group">
+                                            <img id="photoPreview" src="#" alt="Preview"
+                                                class="w-full h-full object-cover hidden">
+                                            <div id="uploadPlaceholder" class="flex flex-col items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                </svg>
+                                            </div>
+                                            <input type="file" id="photoInput" name="image" accept="image/*"
+                                                class="absolute inset-0 opacity-0 cursor-pointer">
+                                            <input type="hidden" name="croppedImage" id="croppedImage">
+                                        </div>
+                                        <div>
+                                            <button type="button"
+                                                onclick="document.getElementById('photoInput').click()"
+                                                class="text-indigo-600 font-medium text-sm hover:text-indigo-700 hover:underline">Upload
+                                                Photo</button>
+                                            <p class="text-xs text-gray-400 mt-1">JPG,
+                                                PNG up to 2MB</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Input Fields -->
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div class="space-y-2">
+                                            <label class="text-sm font-medium text-gray-700">Full
+                                                Name*</label>
+                                            <input type="text" name="name" id="nameInput" placeholder="e.g. Rahul Kumar"
+                                                class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all placeholder-gray-400 text-gray-800">
+                                        </div>
+
+                                        <div class="space-y-2">
+                                            <label class="text-sm font-medium text-gray-700">Date
+                                                of Birth*</label>
+                                            <input type="date" name="dob" id="dobInput"
+                                                class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all text-gray-800">
+                                        </div>
+
+                                        <div class="space-y-2">
+                                            <label class="text-sm font-medium text-gray-700">Father's
+                                                Name*</label>
+                                            <input type="text" name="fatherName" id="fatherNameInput"
+                                                placeholder="e.g. Rajesh Kumar"
+                                                class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all placeholder-gray-400 text-gray-800">
+                                        </div>
+
+                                        <div class="space-y-2">
+                                            <label class="text-sm font-medium text-gray-700">Class</label>
+                                            <select name="classId" id="classInput"
+                                                class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all bg-white text-gray-800">
+                                                <option value="">Select Class</option>
+                                                <% classes.forEach(cls=> { %>
+                                                    <option value="<%= cls._id %>">
+                                                        <%= cls.className %>
+                                                    </option>
+                                                    <% }) %>
+                                            </select>
+                                        </div>
+
+                                        <div class="space-y-2">
+                                            <label class="text-sm font-medium text-gray-700">Section</label><br>
+                                            <select name="sectionId" id="sectionInput"
+                                                class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all bg-white text-gray-800">
+                                                <option value="">Select Section</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="space-y-2">
+                                            <label class="text-sm font-medium text-gray-700">Admission
+                                                No.</label>
+                                            <input type="text" id="admissionNoInput" name="admissionNo"
+                                                placeholder="e.g. ADM-2024-001"
+                                                class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all placeholder-gray-400 text-gray-800">
+                                        </div>
+
+                                        <div class="space-y-2 md:col-span-2">
+                                            <label class="text-sm font-medium text-gray-700">Address*</label>
+                                            <textarea id="addressInput" rows="3" name="address"
+                                                placeholder="Full residential address"
+                                                class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all placeholder-gray-400 text-gray-800 resize-none"></textarea>
+                                        </div>
+
+                                        <div class="space-y-2">
+                                            <label class="text-sm font-medium text-gray-700">Contact
+                                                Number</label>
+                                            <input type="tel" id="contactInput" name="contactNumber"
+                                                placeholder="+91 98765 43210" maxlength="10" minlength="10"
+                                                class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all placeholder-gray-400 text-gray-800">
+                                        </div>
+                                        <div class="space-y-2">
+                                            <label class="text-sm font-medium text-gray-700">Status</label>
+                                            <select name="status" id="statusInput"
+                                                class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all bg-white text-gray-800">
+                                                <option value="">Select Status</option>
+                                                <option value="PENDING">PENDING</option>
+                                                <option value="SUBMITTED">SUBMITTED</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="pt-4 flex items-center space-x-4">
+                                        <button type="submit" id="saveBtn"
+                                            class="flex-1 bg-indigo-600 text-white font-semibold py-3 rounded-xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200">
+                                            Save
+                                        </button>
+                                        <button type="button" id="resetBtn"
+                                            class="px-6 py-3 rounded-xl border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-colors">
+                                            Reset
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Live Preview Section -->
+                            <div class="w-full lg:w-1/2 flex flex-col h-full sticky top-8">
+                                <div
+                                    class="bg-gray-900 rounded-3xl p-6 shadow-2xl relative overflow-hidden min-h-[500px] flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700">
+                                    <!-- Background Pattern -->
+                                    <div class="absolute inset-0 opacity-10">
+                                        <svg width="100%" height="100%">
+                                            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                                                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white"
+                                                    stroke-width="1" />
+                                            </pattern>
+                                            <rect width="100%" height="100%" fill="url(#grid)" />
+                                        </svg>
+                                    </div>
+
+                                    <div class="relative z-10 w-full max-w-sm">
+                                        <h3
+                                            class="text-white/60 text-center text-sm font-medium uppercase tracking-widest mb-8">
+                                            Live Preview</h3>
+
+                                        <!-- ID Card Container (Dynamic Content) -->
+                                        <div id="idCardPreviewContainer" class="w-full">
+                                            <!-- Content injected via JS -->
+                                            <%- include(`../templates/${selectedTemplate}.ejs`, { school, student: null,
+                                                className: "Class" ,
+                                                defaultImage: "https://lh5.googleusercontent.com/proxy/t08n2HuxPfw8OpbutGWjekHAgxfPFv-pZZ5_-uTfhEGK8B5Lp-VN4VjrdxKtr8acgJA93S14m9NdELzjafFfy13b68pQ7zzDiAmn4Xg8LvsTw1jogn_7wStYeOx7ojx5h63Gliw"
+                                                }) %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </main>
+        </div>
+
+        <!-- Image Cropper Modal -->
+        <div id="cropModal" class="fixed inset-0 z-[60] hidden" aria-labelledby="modal-title" role="dialog"
+            aria-modal="true">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity backdrop-blur-sm"></div>
+
+            <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+                <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                    <div
+                        class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-xl">
+                        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                            <h3 class="text-lg font-semibold leading-6 text-gray-900 mb-4" id="modal-title">Adjust Image
+                            </h3>
+                            <div class="img-container w-full h-80 bg-gray-100 rounded-lg overflow-hidden relative">
+                                <img id="imageToCrop" src alt="Picture to crop" class="max-w-full block">
+                                <!-- style inserted by lib -->
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                            <button type="button" id="cropAndSaveBtn"
+                                class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto">Crop
+                                & Save</button>
+                            <button type="button" id="cancelCropBtn"
+                                class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include("../partials/sidebarButton.ejs") %>
+            <script>
+                /* ===============================
+                   ELEMENT REFERENCES
+                   =============================== */
+                const nameInput = document.getElementById('nameInput');
+                const classInput = document.getElementById('classInput');
+                const sectionInput = document.getElementById('sectionInput');
+                const fatherNameInput = document.getElementById('fatherNameInput');
+                const dobInput = document.getElementById('dobInput');
+                const contactInput = document.getElementById('contactInput');
+                const addressInput = document.getElementById('addressInput');
+                const photoInput = document.getElementById('photoInput');
+                const photoPreview = document.getElementById('photoPreview');
+                const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+
+                const cardName = document.getElementById('cardName');
+                const cardClass = document.getElementById('cardClass');
+                const cardfname = document.getElementById('cardfname');
+                const cardDob = document.getElementById('cardDob');
+                const cardPhone = document.getElementById('cardPhone');
+                const cardPhoto = document.getElementById('cardPhoto');
+
+                /* ===============================
+                   IMAGE CROPPER
+                   =============================== */
+                const cropModal = document.getElementById('cropModal');
+                const imageToCrop = document.getElementById('imageToCrop');
+                const cropAndSaveBtn = document.getElementById('cropAndSaveBtn');
+                const cancelCropBtn = document.getElementById('cancelCropBtn');
+                let cropper;
+
+                /* ===============================
+                   LIVE PREVIEW TEXT UPDATES
+                   =============================== */
+                nameInput.addEventListener('input', e => {
+                    cardName.innerText = e.target.value || 'Student Name';
+                });
+
+                fatherNameInput.addEventListener('input', e => {
+                    cardfname.innerText = e.target.value || "Father's Name";
+                });
+
+                dobInput.addEventListener('change', e => {
+                    cardDob.innerText = e.target.value || 'D.O.B';
+                });
+
+                contactInput.addEventListener('input', e => {
+                    cardPhone.innerText = e.target.value || '9876543210';
+                });
+
+                function updateCardClass() {
+                    const clsText = classInput.selectedOptions[0]?.text || '';
+
+                    let secText = '';
+                    if (
+                        sectionInput.selectedIndex > 0 &&
+                        sectionInput.selectedOptions[0].text !== 'Select Section'
+                    ) {
+                        secText = sectionInput.selectedOptions[0].text;
+                    }
+
+                    if (clsText) {
+                        cardClass.innerText = secText ? `${clsText} - ${secText}` : clsText;
+                    } else {
+                        cardClass.innerText = 'Class';
+                    }
+                }
+
+                classInput.addEventListener('change', updateCardClass);
+                sectionInput.addEventListener('change', updateCardClass);
+
+                /* ===============================
+                   IMAGE UPLOAD + CROP
+                   =============================== */
+                photoInput.addEventListener('change', e => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        imageToCrop.src = e.target.result;
+                        cropModal.classList.remove('hidden');
+
+                        if (cropper) cropper.destroy();
+                        cropper = new Cropper(imageToCrop, {
+                            aspectRatio: 1,
+                            viewMode: 1,
+                            autoCropArea: 1
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                    photoInput.value = '';
+                });
+
+                cropAndSaveBtn.addEventListener('click', () => {
+                    if (!cropper) return;
+
+                    const canvas = cropper.getCroppedCanvas({ width: 300, height: 300 });
+                    const imageURL = canvas.toDataURL('image/png');
+
+                    photoPreview.src = imageURL;
+                    photoPreview.classList.remove('hidden');
+                    uploadPlaceholder.classList.add('hidden');
+                    cardPhoto.src = imageURL;
+                    document.getElementById("croppedImage").value = imageURL;
+
+                    cropModal.classList.add('hidden');
+                    cropper.destroy();
+                    cropper = null;
+                });
+
+                cancelCropBtn.addEventListener('click', () => {
+                    cropModal.classList.add('hidden');
+                    if (cropper) cropper.destroy();
+                    cropper = null;
+                });
+
+                /* ===============================
+                   RESET BUTTON (CLEAR STORAGE)
+                   =============================== */
+                document.getElementById('resetBtn').addEventListener('click', () => {
+                    document.querySelector('form').reset();
+
+                    localStorage.removeItem('selectedClass');
+                    localStorage.removeItem('selectedSection');
+
+                    cardName.innerText = 'Student Name';
+                    cardClass.innerText = 'Class';
+                    cardfname.innerText = "Father's Name";
+                    cardDob.innerText = 'D.O.B';
+
+                    photoPreview.classList.add('hidden');
+                    uploadPlaceholder.classList.remove('hidden');
+                    cardPhoto.src = 'https://lh5.googleusercontent.com/proxy/t08n2HuxPfw8OpbutGWjekHAgxfPFv-pZZ5_-uTfhEGK8B5Lp-VN4VjrdxKtr8acgJA93S14m9NdELzjafFfy13b68pQ7zzDiAmn4Xg8LvsTw1jogn_7wStYeOx7ojx5h63Gliw';
+                });
+
+                classInput.addEventListener("change", async () => {
+                    const classId = classInput.value;
+
+                    // reset section
+                    sectionInput.innerHTML = `<option value="">Loading...</option>`;
+
+                    if (!classId) {
+                        sectionInput.innerHTML = `<option value="">Select Section</option>`;
+                        return;
+                    }
+
+                    try {
+                        const res = await fetch(`/admin/sections/by-class/${classId}`);
+                        const sections = await res.json();
+
+                        sectionInput.innerHTML = `<option value="">Select Section</option>`;
+
+                        sections.forEach(sec => {
+                            const option = document.createElement("option");
+                            option.value = sec._id;
+                            option.textContent = sec.sectionName;
+                            sectionInput.appendChild(option);
+                        });
+                    } catch (err) {
+                        sectionInput.innerHTML = `<option value="">Error loading sections</option>`;
+                    }
+                });
+
+
+            </script>
+
+</body>
+
+</html>

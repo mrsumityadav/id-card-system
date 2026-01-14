@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batch Printing | Super Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+
+            .print-container {
+                padding: 0 !important;
+                margin: 0 !important;
+                display: block !important;
+            }
+
+            .id-card-wrapper {
+                break-inside: avoid;
+                margin-bottom: 20px;
+                display: inline-block;
+                width: 50%;
+                /* 2 cards per row on A4 */
+                box-sizing: border-box;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800">
+    <!-- Mobile Nav Header -->
+    <%- include("../partials/adminHeader.ejs") %>
+
+        <div class="flex h-screen overflow-hidden pt-16 md:pt-0">
+            <!-- Sidebar -->
+            <%- include("../partials/adminSidebar.ejs") %>
+
+                <!-- Main Content Area -->
+                <main class="flex-1 overflow-y-auto bg-slate-50 p-6 md:p-10">
+                    <div class="max-w-7xl mx-auto">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+                            <div>
+                                <h1 class="text-4xl font-bold text-slate-900 tracking-tight mb-2">Batch Printing Module</h1>
+                                <p class="text-slate-500 text-lg text-rose-600 font-medium">Select School for ID Card Print Layout Generation</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                            <% schools.forEach(school=> { %>
+
+                                <a href="/superAdmin/print/<%= school._id %>"
+                                    class="bg-white rounded-[2rem] p-8 shadow-sm border border-rose-50 hover:shadow-xl transition-all duration-500 group relative overflow-hidden">
+                                    <!-- Status -->
+                                    <div class="absolute top-0 right-0 p-4">
+                                        <span
+                                            class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold uppercase">
+                                            Active
+                                        </span>
+                                    </div>
+
+                                    <!-- Logo / Initials -->
+                                    <div
+                                        class="w-20 h-20 bg-indigo-600 rounded-[1.5rem] flex items-center justify-center text-white text-3xl font-bold mb-6 shadow-lg shadow-indigo-200 overflow-hidden">
+
+                                        <% if (school.logo) { %>
+                                            <img src="<%= school.logo %>" class="w-full h-full object-cover" />
+                                            <% } else { %>
+                                                <%= school.name.slice(0,2).toUpperCase() %>
+                                                    <% } %>
+
+                                    </div>
+
+                                    <!-- School Name -->
+                                    <h3 class="text-2xl font-bold text-slate-900 mb-2">
+                                        <%= school.name %>
+                                    </h3>
+
+                                    <!-- Address -->
+                                    <p class="text-slate-500 mb-6 flex items-center space-x-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                        <span>
+                                            <%= school.address %>- <%= school.pincode %>
+                                        </span>
+                                    </p>
+
+                                    <!-- Stats -->
+                                    <div class="grid grid-cols-3 gap-4">
+                                        <div class="bg-slate-50 p-4 rounded-2xl">
+                                            <p
+                                                class="text-center text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-1">
+                                                Total Students
+                                            </p>
+                                            <p class="text-xl font-bold text-slate-800 text-center">
+                                                <%= school.totalStudents || 0 %>
+                                            </p>
+                                        </div>
+
+                                        <div class="bg-slate-50 p-4 rounded-2xl">
+                                            <p
+                                                class="text-center text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-1">
+                                                Submitted IDs
+                                            </p>
+                                            <p class="text-center text-xl font-bold text-emerald-600">
+                                                <%= school.submittedCount || 0 %>
+                                            </p>
+                                        </div>
+                                        <div class="bg-slate-50 p-4 rounded-2xl">
+                                            <p
+                                                class="text-center text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-1">
+                                                Printed IDs
+                                            </p>
+                                            <p class="text-center text-xl font-bold text-emerald-600">
+                                                <%= school.printedCount || 0 %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+
+                                <% }) %>
+
+                        </div>
+
+                    </div>
+                </main>
+        </div>
+
+        <!-- Print Preview Layer -->
+        <div id="printArea" class="hidden print-container bg-white">
+            <!-- Cards for printing -->
+        </div>
+
+        <!-- <script>
+            const studentIDs = JSON.parse(localStorage.getItem('studentIDs') || '[]');
+            const idList = document.getElementById('idList');
+            const printArea = document.getElementById('printArea');
+            const printBtn = document.getElementById('printBtn');
+            let selectedIds = new Set();
+
+            function renderList() {
+                if (studentIDs.length === 0) {
+                    idList.innerHTML = '<div class="col-span-full bg-white p-12 rounded-[2rem] text-center"><p class="text-slate-400 font-bold text-xl">No student records found in database.</p></div>';
+                    return;
+                }
+
+                idList.innerHTML = studentIDs.map((student, index) => `
+                <div class="bg-white p-4 rounded-3xl shadow-sm border ${selectedIds.has(index) ? 'border-indigo-600 ring-2 ring-indigo-100' : 'border-slate-100'} flex items-center space-x-4 cursor-pointer hover:shadow-md transition-all group" onclick="toggleSelect(${index})">
+                    <div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center overflow-hidden flex-shrink-0">
+                        ${student.photo ? `<img src="${student.photo}" class="w-full h-full object-cover">` : '<span class="text-slate-400 font-bold">#</span>'}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-bold text-slate-800 truncate">${student.name}</h4>
+                        <p class="text-xs text-slate-500">Roll: ${student.rollNo} | Class: ${student.class.toUpperCase()} - ${student.section}</p>
+                    </div>
+                    <div class="w-6 h-6 rounded-full border-2 ${selectedIds.has(index) ? 'bg-indigo-600 border-indigo-600' : 'border-slate-200'} flex items-center justify-center transition-colors">
+                        ${selectedIds.has(index) ? '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ''}
+                    </div>
+                </div>
+            `).join('');
+
+                printBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                <span>Print Selected (${selectedIds.size})</span>
+            `;
+            }
+
+            window.toggleSelect = function (index) {
+                if (selectedIds.has(index)) {
+                    selectedIds.delete(index);
+                } else {
+                    selectedIds.add(index);
+                }
+                renderList();
+            };
+
+            printBtn.onclick = () => {
+                if (selectedIds.size === 0) {
+                    alert('Please select at least one ID card to print.');
+                    return;
+                }
+
+                // Prepare Print Area
+                printArea.innerHTML = '';
+                const selectedStudents = Array.from(selectedIds).map(idx => studentIDs[idx]);
+
+                selectedStudents.forEach((student, i) => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'id-card-wrapper';
+
+                    // Construct ID card HTML (simplified for print)
+                    wrapper.innerHTML = `
+                    <div style="width: 338px; height: 212px; background: white; border-radius: 12px; border: 1px solid #ddd; overflow: hidden; position: relative; font-family: 'Inter', sans-serif;">
+                        <div style="background: #1e3a8a; height: 60px; padding: 10px; color: white;">
+                           <h2 style="margin: 0; font-size: 14px; text-transform: uppercase;">NIKHIL PUBLIC SCHOOL</h2>
+                           <p style="margin: 0; font-size: 8px; opacity: 0.8;">Excellent Education Center</p>
+                        </div>
+                        <div style="padding: 15px; display: flex;">
+                             <div style="width: 80px; height: 90px; border-radius: 8px; overflow: hidden; background: #f3f4f6; margin-right: 15px; border: 1px solid #eee;">
+                                ${student.photo ? `<img src="${student.photo}" style="width:100%; height:100%; object-cover">` : ''}
+                             </div>
+                             <div style="flex: 1;">
+                                 <h3 style="margin: 0 0 5px 0; font-size: 16px; color: #111;">${student.name}</h3>
+                                 <p style="margin: 0; font-size: 10px; color: #666;">Class: ${student.class.toUpperCase()} | Sec: ${student.section}</p>
+                                 <p style="margin: 0; font-size: 10px; color: #666;">Roll No: ${student.rollNo}</p>
+                                 <p style="margin: 2px 0; font-size: 10px; color: #666;">Adm: ${student.admissionNo}</p>
+                                 <p style="margin: 2px 0; font-size: 8px; color: #666;">DOB: ${student.dob}</p>
+                             </div>
+                             <div id="qr-${i}" style="width: 50px; height: 50px;"></div>
+                        </div>
+                    </div>
+                `;
+                    printArea.appendChild(wrapper);
+
+                    // Generate QR Code for each card
+                    setTimeout(() => {
+                        new QRCode(document.getElementById(`qr-${i}`), {
+                            text: `ID:${student.admissionNo}|Name:${student.name}`,
+                            width: 50,
+                            height: 50
+                        });
+                    }, 50);
+                });
+
+                // Trigger Print after a small delay for QR generation
+                setTimeout(() => {
+                    window.print();
+                }, 500);
+            };
+
+            renderList();
+        </script> -->
+</body>
+
+</html>

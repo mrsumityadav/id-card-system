@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Preview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-50 text-slate-800">
+
+    <%- include("../partials/mobileHeader.ejs") %>
+
+        <div class="flex h-screen overflow-hidden pt-16 md:pt-0">
+
+            <%- include("../partials/sidebar.ejs") %>
+
+                <main class="flex-1 overflow-y-auto h-full bg-slate-50 p-6 md:p-10 transition-all duration-300">
+
+                    <div class="max-w-7xl mx-auto">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-8">
+                            <div>
+                                <div class="flex items-center space-x-3 mb-2">
+                                    <a href="/admin/classes" class="text-gray-400 hover:text-gray-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 19l-7-7 7-7" />
+                                        </svg>
+                                    </a>
+                                    <h1 class="text-3xl font-bold text-gray-900 tracking-tight" id="pageTitle">ID's
+                                        Preview</h1>
+                                </div>
+                                <p class="text-gray-500 ml-9" id="pageSubtitle">Review and submit ID cards</p>
+                            </div>
+                            <div class="mt-4 md:mt-0">
+                                <select id="sectionFilter"
+                                    class="px-4 py-2.5 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all bg-white text-gray-800">
+
+                                    <option value="all" <%=selectedSection==="all" ? "selected" : "" %>>
+                                        All Sections
+                                    </option>
+
+                                    <% ["A","B","C","D"].forEach(sec=> { %>
+                                        <option value="<%= sec %>" <%=selectedSection===sec ? "selected" : "" %>>
+                                            Section <%= sec %>
+                                        </option>
+                                        <% }) %>
+                                </select>
+                            </div>
+
+
+
+                        </div>
+
+                        <!-- Stats -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                                <p class="text-gray-500 text-sm font-semibold uppercase tracking-wider mb-2">Total IDs
+                                </p>
+                                <p class="text-4xl font-bold text-gray-900" id="totalCount">
+                                    <%= totalIds %>
+                                </p>
+                            </div>
+                            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                                <p class="text-gray-500 text-sm font-semibold uppercase tracking-wider mb-2">Pending</p>
+                                <p class="text-4xl font-bold text-orange-600" id="pendingCount">
+                                    <%= pendingCount %>
+                                </p>
+                            </div>
+                            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                                <p class="text-gray-500 text-sm font-semibold uppercase tracking-wider mb-2">Submitted
+                                </p>
+                                <p class="text-4xl font-bold text-green-600" id="submittedCount">
+                                    <%= submittedCount %>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Empty State -->
+                        <% if (students.length===0) { %>
+                            <div class="bg-white p-6 rounded-xl shadow text-center text-gray-500">
+                                <p>No students found for this class.</p>
+                            </div>
+                            <% } else { %>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    <% students.forEach(student=> { %>
+                                        <%- include(`../templates/${selectedTemplate}.ejs`, { student: { name:
+                                            student.name, className: student.classId.className + (student.sectionId
+                                            ? " - " + student.sectionId.sectionName : "" ), dob: new
+                                            Date(student.dob).toLocaleDateString('en-GB'), fatherName:
+                                            student.fatherName, contactNumber:student.contactNumber, image:
+                                            student.image, address: student.address }, school }) %>
+                                            <% }) %>
+                                </div>
+
+                                <% } %>
+
+                                    <form method="POST" action="/admin/class/<%= classId %>/submit-all"
+                                        onsubmit="return confirm('Submit all pending ID cards?')">
+
+                                        <button
+                                            class="fixed bottom-4 right-4 bg-blue-600 text-white px-5 py-2 rounded-full shadow-lg hover:bg-blue-700 active:scale-95 transition-all text-sm sm:text-base md:text-base">
+                                            Submit All
+                                        </button>
+
+                                    </form>
+                    </div>
+                </main>
+        </div>
+
+        <%- include("../partials/sidebarButton.ejs") %>
+
+            <script>
+                const sectionFilter = document.getElementById("sectionFilter");
+
+                sectionFilter.addEventListener("change", () => {
+                    const section = sectionFilter.value;
+                    const classId = "<%= classId %>";
+
+                    window.location.href = `/admin/class/${classId}?section=${section}`;
+                });
+            </script>
+
+
+</body>
+
+</html>
