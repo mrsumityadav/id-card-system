@@ -6,21 +6,28 @@ const logInRouter = require('./routes/login')
 const signUpRouter = require('./routes/singup')
 const adminRouter = require('./routes/admin')
 const superAdminRouter = require('./routes/superadmin')
+const path = require("path");
+const MongoStore = require("connect-mongo");
 
 const cookieParser = require('cookie-parser')
 const session = require('express-session');
 const validateAdmin = require('./middleware/admin')
 const validateSuperAdmin = require('./middleware/superAdmin')
 
-app.use(express.static("public"))
+app.use(express.static(path.join(__dirname, "public")));
 app.set('view engine', 'ejs')
 require('./config/db')
 app.use(session({
-  secret: "print-cart-secret",
+  secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: true
-})
-);
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URL
+  }),
+  cookie: {
+    secure: false
+  }
+}));
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
