@@ -16,10 +16,10 @@ app.use(express.static("public"))
 app.set('view engine', 'ejs')
 require('./config/db')
 app.use(session({
-    secret: "print-cart-secret",
-    resave: false,
-    saveUninitialized: true
-  })
+  secret: "print-cart-secret",
+  resave: false,
+  saveUninitialized: true
+})
 );
 
 app.use(express.json())
@@ -36,4 +36,7 @@ app.use('/signup', signUpRouter)
 app.use('/admin', validateAdmin, adminRouter)
 app.use('/superAdmin', validateSuperAdmin, superAdminRouter)
 
-app.listen(3000)
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log("Server running");
+});
