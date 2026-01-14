@@ -10,7 +10,7 @@ const path = require("path");
 
 const cookieParser = require('cookie-parser')
 const session = require('express-session');
-const MongoStore = require("connect-mongo")(session);
+const MongoStore = require("connect-mongo");
 const validateAdmin = require('./middleware/admin')
 const validateSuperAdmin = require('./middleware/superAdmin')
 
@@ -22,7 +22,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    store: new MongoStore({
+    store: MongoStore.create({
       mongoUrl: process.env.MONGO_URL,
       collectionName: "sessions",
     }),
