@@ -9,6 +9,7 @@ const Class = require("../models/class");
 const Section = require("../models/section");
 const compressBase64Image = require("../utils/compressBase64");
 
+// seeding classees
 async function seed() {
   const school = await schoolModel.findOne();
   if (!school) {
@@ -47,6 +48,42 @@ async function seed() {
 }
 // 👉 ONE TIME RUN
 // seed();
+
+// create admin user
+async function createAdmin() {
+  try {
+    // await mongoose.connect(MONGO_URI);
+    // console.log("MongoDB connected");
+
+    // // check: kahi admin already exist to nahi
+    // const adminExists = await User.findOne({ role: "admin" });
+    // if (adminExists) {
+    //   console.log("Admin already exists. Script stopped.");
+    //   process.exit(0);
+    // }
+
+    // const hashedPassword = await bcrypt.hash("Admin@123", 10);
+
+    const adminUser = new userModel({
+      name: "Admin",
+      email: "admin@example.com",
+      password: 'idcard@123',
+      phone: "9999999999",
+      role: "admin",
+      isFirstLogin: false
+    });
+
+    await adminUser.save();
+    console.log("✅ Admin user created successfully");
+
+    process.exit(0);
+  } catch (err) {
+    console.error("❌ Error creating admin:", err);
+    process.exit(1);
+  }
+}
+// createAdmin();
+
 
 router.get('/', async function (req, res) {
   const school = await schoolModel.findOne({ ownerUserId: req.user._id });
