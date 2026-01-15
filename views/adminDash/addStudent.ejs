@@ -46,8 +46,7 @@
                         <div class="mb-8">
                             <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Add
                                 New Student</h1>
-                            <p class="text-gray-500 mt-1">Enter student details to
-                                generate ID card</p>
+                            <p class="text-gray-500 mt-1">Enter student details to generate ID card</p>
                         </div>
 
                         <div class="flex flex-col lg:flex-row gap-8 items-start h-full">
@@ -76,14 +75,26 @@
                                             <input type="file" id="photoInput" name="image" accept="image/*"
                                                 class="absolute inset-0 opacity-0 cursor-pointer">
                                             <input type="hidden" name="croppedImage" id="croppedImage">
+                                            <input type="file" id="cameraInput" accept="image/*" capture="environment"
+                                                hidden>
                                         </div>
                                         <div>
-                                            <button type="button"
-                                                onclick="document.getElementById('photoInput').click()"
-                                                class="text-indigo-600 font-medium text-sm hover:text-indigo-700 hover:underline">Upload
-                                                Photo</button>
-                                            <p class="text-xs text-gray-400 mt-1">JPG,
-                                                PNG up to 2MB</p>
+                                            <button type="button" onclick="togglePhotoOptions()"
+                                                class="text-indigo-600 font-medium text-sm hover:text-indigo-700 hover:underline">
+                                                Upload Photo
+                                            </button>
+                                            <div id="photoOptions"
+                                                class="hidden mt-2 bg-white border border-gray-200 rounded-lg shadow-md w-40 text-sm">
+                                                <button type="button" onclick="openGallery()"
+                                                    class="w-full text-left px-4 py-2 hover:bg-gray-100">
+                                                    📁 Upload Image
+                                                </button>
+                                                <button type="button" onclick="openCamera()"
+                                                    class="w-full text-left px-4 py-2 hover:bg-gray-100">
+                                                    📷 Click Photo
+                                                </button>
+                                            </div>
+                                            <p class="text-xs text-gray-400 mt-1">JPG, PNG up to 2MB</p>
                                         </div>
                                     </div>
 
@@ -97,8 +108,7 @@
                                         </div>
 
                                         <div class="space-y-2">
-                                            <label class="text-sm font-medium text-gray-700">Date
-                                                of Birth*</label>
+                                            <label class="text-sm font-medium text-gray-700">Date of Birth*</label>
                                             <input type="date" name="dob" id="dobInput"
                                                 class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all text-gray-800">
                                         </div>
@@ -256,7 +266,9 @@
                 const dobInput = document.getElementById('dobInput');
                 const contactInput = document.getElementById('contactInput');
                 const addressInput = document.getElementById('addressInput');
+
                 const photoInput = document.getElementById('photoInput');
+                const cameraInput = document.getElementById('cameraInput');
                 const photoPreview = document.getElementById('photoPreview');
                 const uploadPlaceholder = document.getElementById('uploadPlaceholder');
 
@@ -274,7 +286,24 @@
                 const imageToCrop = document.getElementById('imageToCrop');
                 const cropAndSaveBtn = document.getElementById('cropAndSaveBtn');
                 const cancelCropBtn = document.getElementById('cancelCropBtn');
-                let cropper;
+                let cropper = null;
+
+                /* ===============================
+                   PHOTO OPTION FUNCTIONS
+                   =============================== */
+                function togglePhotoOptions() {
+                    document.getElementById('photoOptions').classList.toggle('hidden');
+                }
+
+                function openGallery() {
+                    document.getElementById('photoOptions').classList.add('hidden');
+                    photoInput.click();
+                }
+
+                function openCamera() {
+                    document.getElementById('photoOptions').classList.add('hidden');
+                    cameraInput.click();
+                }
 
                 /* ===============================
                    LIVE PREVIEW TEXT UPDATES
@@ -297,8 +326,8 @@
 
                 function updateCardClass() {
                     const clsText = classInput.selectedOptions[0]?.text || '';
-
                     let secText = '';
+
                     if (
                         sectionInput.selectedIndex > 0 &&
                         sectionInput.selectedOptions[0].text !== 'Select Section'
@@ -306,21 +335,18 @@
                         secText = sectionInput.selectedOptions[0].text;
                     }
 
-                    if (clsText) {
-                        cardClass.innerText = secText ? `${clsText} - ${secText}` : clsText;
-                    } else {
-                        cardClass.innerText = 'Class';
-                    }
+                    cardClass.innerText = clsText
+                        ? (secText ? `${clsText} - ${secText}` : clsText)
+                        : 'Class';
                 }
 
                 classInput.addEventListener('change', updateCardClass);
                 sectionInput.addEventListener('change', updateCardClass);
 
                 /* ===============================
-                   IMAGE UPLOAD + CROP
+                   IMAGE LOAD → OPEN CROPPER
                    =============================== */
-                photoInput.addEventListener('change', e => {
-                    const file = e.target.files[0];
+                function openCropper(file) {
                     if (!file) return;
 
                     const reader = new FileReader();
@@ -336,18 +362,35 @@
                         });
                     };
                     reader.readAsDataURL(file);
+                }
+
+                photoInput.addEventListener('change', e => {
+                    openCropper(e.target.files[0]);
                     photoInput.value = '';
                 });
 
+                cameraInput.addEventListener('change', e => {
+                    openCropper(e.target.files[0]);
+                    cameraInput.value = '';
+                });
+
+                /* ===============================
+                   CROP & SAVE
+                   =============================== */
                 cropAndSaveBtn.addEventListener('click', () => {
                     if (!cropper) return;
 
-                    const canvas = cropper.getCroppedCanvas({ width: 300, height: 300 });
+                    const canvas = cropper.getCroppedCanvas({
+                        width: 300,
+                        height: 300
+                    });
+
                     const imageURL = canvas.toDataURL('image/png');
 
                     photoPreview.src = imageURL;
                     photoPreview.classList.remove('hidden');
                     uploadPlaceholder.classList.add('hidden');
+
                     cardPhoto.src = imageURL;
                     document.getElementById("croppedImage").value = imageURL;
 
@@ -363,7 +406,7 @@
                 });
 
                 /* ===============================
-                   RESET BUTTON (CLEAR STORAGE)
+                   RESET BUTTON
                    =============================== */
                 document.getElementById('resetBtn').addEventListener('click', () => {
                     document.querySelector('form').reset();
@@ -378,13 +421,15 @@
 
                     photoPreview.classList.add('hidden');
                     uploadPlaceholder.classList.remove('hidden');
-                    cardPhoto.src = 'https://lh5.googleusercontent.com/proxy/t08n2HuxPfw8OpbutGWjekHAgxfPFv-pZZ5_-uTfhEGK8B5Lp-VN4VjrdxKtr8acgJA93S14m9NdELzjafFfy13b68pQ7zzDiAmn4Xg8LvsTw1jogn_7wStYeOx7ojx5h63Gliw';
+                    cardPhoto.src =
+                        'https://lh5.googleusercontent.com/proxy/t08n2HuxPfw8OpbutGWjekHAgxfPFv-pZZ5_-uTfhEGK8B5Lp-VN4VjrdxKtr8acgJA93S14m9NdELzjafFfy13b68pQ7zzDiAmn4Xg8LvsTw1jogn_7wStYeOx7ojx5h63Gliw';
                 });
 
+                /* ===============================
+                   LOAD SECTIONS BY CLASS
+                   =============================== */
                 classInput.addEventListener("change", async () => {
                     const classId = classInput.value;
-
-                    // reset section
                     sectionInput.innerHTML = `<option value="">Loading...</option>`;
 
                     if (!classId) {
@@ -408,9 +453,8 @@
                         sectionInput.innerHTML = `<option value="">Error loading sections</option>`;
                     }
                 });
-
-
             </script>
+
 
 </body>
 
