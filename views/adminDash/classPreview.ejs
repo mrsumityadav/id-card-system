@@ -87,12 +87,14 @@
 
                                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     <% students.forEach(student=> { %>
-                                        <%- include(`../templates/${selectedTemplate}.ejs`, { student: { name:
-                                            student.name, className: student.classId.className + (student.sectionId
-                                            ? " - " + student.sectionId.sectionName : "" ), dob: new
-                                            Date(student.dob).toLocaleDateString('en-GB'), fatherName:
-                                            student.fatherName, contactNumber:student.contactNumber, image:
-                                            student.image, address: student.address }, school }) %>
+                                        <%- include(`../templates/${selectedTemplate}.ejs`, {
+                                            student: { 
+                                                name:student.name, 
+                                                className: student.classId.className + (student.sectionId ? " - " + student.sectionId.sectionName : "" ), 
+                                                dob: new Date(student.dob).toLocaleDateString('en-GB'), 
+                                                fatherName: student.fatherName, contactNumber:student.contactNumber, 
+                                                image: student.image, address: student.address },
+                                            school, defaultImage: 'https://lh5.googleusercontent.com/proxy/t08n2HuxPfw8OpbutGWjekHAgxfPFv-pZZ5_-uTfhEGK8B5Lp-VN4VjrdxKtr8acgJA93S14m9NdELzjafFfy13b68pQ7zzDiAmn4Xg8LvsTw1jogn_7wStYeOx7ojx5h63Gliw' }) %>
                                             <% }) %>
                                 </div>
 
